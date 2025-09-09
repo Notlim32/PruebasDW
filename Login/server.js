@@ -1,4 +1,5 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const path = require("path");
 
@@ -17,6 +18,13 @@ const USERS = {
   usuario: "1234", // usuario: contraseña
   admin: "adminpass"
 };
+// Conexión a base de datos Mongo
+mongoose.connect("mongodb://127.0.0.1:27017/miLogin",{
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(()=> console.log("conectado a MongoDB"))
+.catch(err=> console.error("Error al conectar: ",err))
 
 // Ruta para procesar login
 app.post("/login", (req, res) => {
