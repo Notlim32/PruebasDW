@@ -15,6 +15,6 @@ form.addEventListener("submit", async (e) => {
   });
 
   const data = await response.json();
-  document.getElementById("message").textContent = data.message;
-  document.getElementById("message").style.color = data.success ? "green" : "red";
+  document.getElementById("message").textContent = data.mensaje;
+  document.getElementById("message").style.color = data.rol ? "green" : "red";
 });
