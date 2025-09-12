@@ -1,8 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const User = require("./models/ User");
+const User = require("./models/User");
 const bodyParser = require("body-parser");
 const path = require("path");
+const bcrypt =require("bcrypt");
 
 const app = express();
 const PORT = 3000;
@@ -30,13 +31,18 @@ mongoose.connect("mongodb://127.0.0.1:27017/miLogin",{
 //Rutas
 app.post("/register",async(req,res)=>{
   try{
-    const nuevoUsuario=new User(req.body);
+    const{email,password}=req.body;
+    const hashedPassword=await bcrypt.hash(password,10);
+    const nuevoUsuario = new User({ ...req.body,
+      password: hashedPassword,
+    });
     await nuevoUsuario.save();
-    res.status(201).json({mensaje:"USUARIO CREADO", usuario : nuevoUsuario});
-  }catch (err){
-    res.status(400).json({error: err.message});
+    res.status(201).json({ mensaje:"Usuario Creado",usuario:nuevoUsuario});
+  } catch(err){
+    res.status(400).json({error:err.message});
   }
-})
+});
+   
 
 app.post("/login",async(req,res)=>{
   const{email,password}= req.body;
@@ -46,6 +52,16 @@ app.post("/login",async(req,res)=>{
   res.json({mensaje:"Login Exitoso",rol:usuario.rol, usuario});
 })
 
+app.get("/api/users", async (req,res)=>{
+  try{
+    const users=await User.find();
+    res.json(users);
+  } catch (error){
+    res.status(500).json({error: "Error al obtener usuario"});
+
+  }
+  
+});
 // Iniciando
 
 app.listen(PORT, () => {

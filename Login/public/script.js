@@ -4,6 +4,7 @@ form.addEventListener("submit", async (e) => {// escucha cuando el usuario enví
   e.preventDefault();// evita que la página se recargue al enviar
 
   const username = document.getElementById("username").value;// lee el valor del input usuario
+  const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
   const response = await fetch("/login", {//envía los datos al servidor en la ruta /login
@@ -11,10 +12,10 @@ form.addEventListener("submit", async (e) => {// escucha cuando el usuario enví
     headers: {
       "Content-Type": "application/json"// indica que el cuerpo es JSON
     },
-    body: JSON.stringify({ username, password })// convierte los datos a JSON
+    body: JSON.stringify({ email, password })
   });
 
-  const data = await response.json();// espera y convierte la respuesta del servidor a objeto JS
-  document.getElementById("message").textContent = data.message;// muestra el mensaje devuelto por el servidor
-  document.getElementById("message").style.color = data.success ? "green" : "red";// colorea según éxito o error
+  const data = await response.json();
+  document.getElementById("message").textContent = data.mensaje;
+  document.getElementById("message").style.color = data.rol ? "green" : "red";
 });
