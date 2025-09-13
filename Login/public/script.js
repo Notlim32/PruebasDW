@@ -1,15 +1,16 @@
-const form = document.getElementById("loginForm");
+const form = document.getElementById("loginForm");// obtiene el formulario por su id
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
+form.addEventListener("submit", async (e) => {// escucha cuando el usuario envía el formulario
+  e.preventDefault();// evita que la página se recargue al enviar
 
+  const username = document.getElementById("username").value;// lee el valor del input usuario
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
-  const response = await fetch("/login", {
-    method: "POST",
+  const response = await fetch("/login", {//envía los datos al servidor en la ruta /login
+    method: "POST",// método HTTP POST para enviar datos
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json"// indica que el cuerpo es JSON
     },
     body: JSON.stringify({ email, password })
   });
