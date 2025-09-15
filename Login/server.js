@@ -32,6 +32,11 @@ mongoose.connect("mongodb://127.0.0.1:27017/miLogin",{
 app.post("/register",async(req,res)=>{
   try{
     const{email,password}=req.body;
+    const existente=await User.findOne({email});
+    if(existente){
+      return res.status(400).jason({error:"El correo ya fue registrado"})
+    }
+
     const hashedPassword=await bcrypt.hash(password,10);
     const nuevoUsuario = new User({ ...req.body,
       password: hashedPassword,
@@ -44,13 +49,39 @@ app.post("/register",async(req,res)=>{
 });
    
 
-app.post("/login",async(req,res)=>{
-  const{email,password}= req.body;
-  const usuario= await User.findOne({email,password});
-  if(!usuario)
-    return res.status(401).json({mensaje:"Usuario Incorrecto"});
-  res.json({mensaje:"Login Exitoso",rol:usuario.rol, usuario});
-})
+app.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    const usuario = await User.findOne({ email });
+    
+    if (!usuario) {
+      return res.status(401).json({ mensaje: "Usuario no encontrado" });
+    }
+    
+    const esValida = await bcrypt.compare(password, usuario.password);
+   
+    if (!esValida) {
+      return res.status(401).json({ mensaje: "Contraseña Incorrecta" });
+    }
+    
+    console.log(" Login exitoso");
+    res.json({
+      mensaje: "Login Exitoso",
+      rol: usuario.rol,
+      usuario: {
+        id: usuario._id,
+        nombre: usuario.nombre,
+        email: usuario.email,
+        rol: usuario.rol
+      }
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Error en el Login" });
+  }
+});
+  
 
 app.get("/api/users", async (req,res)=>{
   try{
@@ -66,4 +97,28 @@ app.get("/api/users", async (req,res)=>{
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
+});
+
+
+//Ruta temporal para reset password
+app.post("/reset-password", async (req, res) => {
+  try {
+    const { email, newPassword } = req.body;
+    
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    
+    const usuario = await User.findOneAndUpdate(
+      { email },
+      { password: hashedPassword },
+      { new: true }
+    );
+    
+    if (!usuario) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+    
+    res.json({ mensaje: "Contraseña actualizada", email: usuario.email });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });

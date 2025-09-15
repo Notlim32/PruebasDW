@@ -1,22 +1,55 @@
-const form = document.getElementById("registerForm");// obtiene el formulario por su id
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-form.addEventListener("submit", async (e) => {// escucha cuando el usuario envía el formulario
-  e.preventDefault();// evita que la página se recargue al enviar
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const messageElement = document.getElementById('message');
 
-  const username = document.getElementById("username").value;// lee el valor del input usuario
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const rol= document.getElementById("rol").value;
+    // Validaciones básicas
+    if (!email || !password) {
+        messageElement.textContent = 'Todos los campos son obligatorios';
+        messageElement.style.color = 'red';
+        return;
+    }
 
-  const response = await fetch("/register", {//envía los datos al servidor en la ruta /login
-    method: "POST",// método HTTP POST para enviar datos
-    headers: {
-      "Content-Type": "application/json"// indica que el cuerpo es JSON
-    },
-    body: JSON.stringify({ username,email, password,rol })
-  });
+    try {
+        console.log('Enviando login...'); // Para debug
+        
+        const response = await fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email,
+                password
+            }),
+        });
 
-  const data = await response.json();
-  document.getElementById("message").textContent = data.mensaje;
-  document.getElementById("message").style.color = data.rol ? "green" : "red";
+        console.log('Respuesta recibida:', response.status); // Para debug
+
+        const data = await response.json();
+        console.log('Datos:', data); // Para debug
+
+        if (response.ok) {
+            messageElement.textContent = 'Login exitoso! Redirigiendo...';
+            messageElement.style.color = 'green';
+            
+            // Redirigir según el rol
+            setTimeout(() => {
+                if (data.rol === 'doctor') {
+                    window.location.href = 'DoctorInterface.html';
+                } else {
+                    window.location.href = 'PatientInterface.html';
+                }
+            }, 1000);
+        } else {
+            messageElement.textContent = data.mensaje || 'Error al iniciar sesión';
+            messageElement.style.color = 'red';
+        }
+    } catch (error) {
+        console.error('Error completo:', error);
+        messageElement.textContent = 'Error de conexión con el servidor';
+        messageElement.style.color = 'red';
+    }
 });
