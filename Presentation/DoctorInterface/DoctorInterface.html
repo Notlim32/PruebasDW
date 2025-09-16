@@ -1,11 +1,197 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Gestión Médica - Hospital La Paz</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="DoctorInterface.css">
 </head>
 <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-hospital">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-hospital me-2"></i>Hospital La Paz
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#"><i class="fas fa-home me-1"></i> Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-user-md me-1"></i> Doctores</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-users me-1"></i> Pacientes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-calendar-check me-1"></i> Citas</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <span class="navbar-text me-3">
+                        <i class="fas fa-user me-1"></i> <span id="user-display-name">Usuario</span>
+                    </span>
+                    <button class="btn btn-outline-hospital" onclick="logout()">
+                        <i class="fas fa-sign-out-alt me-1"></i> Cerrar Sesión
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-4">
+        <!-- Sección de Bienvenida -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-hospital">
+                    <h4><i class="fas fa-user-md me-2"></i> <span id="user-welcome-message">Panel de Control Médico</span></h4>
+                    <p class="mb-0">Bienvenido al sistema de gestión médica del Hospital La Paz</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navegación para Médicos -->
+        <div class="d-flex justify-content-center mb-4">
+            <button class="btn btn-hospital doctor-nav-btn active" data-section="doctor-dashboard">
+                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+            </button>
+            <button class="btn btn-outline-hospital doctor-nav-btn mx-2" data-section="doctor-patients">
+                <i class="fas fa-users me-2"></i>Pacientes
+            </button>
+            <button class="btn btn-outline-hospital doctor-nav-btn" data-section="doctor-appointments">
+                <i class="fas fa-calendar-check me-2"></i>Citas
+            </button>
+            <button class="btn btn-outline-hospital doctor-nav-btn mx-2" data-section="doctor-prescriptions">
+                <i class="fas fa-prescription me-2"></i>Recetas
+            </button>
+        </div>
+
+        <!-- Secciones para Doctores -->
+        <div id="doctor-section">
+            <!-- Dashboard Médico -->
+            <div id="doctor-dashboard" class="doctor-content-section">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-user-md me-2"></i>Panel de Control Médico
+                            </div>
+                            <div class="card-body">
+                                <div class="alert alert-info">
+                                    <h5>Bienvenido al panel médico</h5>
+                                    <p class="mb-0">Desde aquí puede gestionar los tratamientos de sus pacientes, revisar historiales médicos y programar recordatorios.</p>
+                                </div>
+
+                                <div class="row mt-4">
+                                    <div class="col-md-4 mb-4">
+                                        <div class="card text-center">
+                                            <div class="card-body">
+                                                <i class="fas fa-users feature-icon"></i>
+                                                <h5>Pacientes</h5>
+                                                <p class="text-muted">Gestionar lista de pacientes</p>
+                                                <button class="btn btn-hospital" onclick="showDoctorSection('doctor-patients')">Ver Pacientes</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                        <div class="card text-center">
+                                            <div class="card-body">
+                                                <i class="fas fa-prescription feature-icon"></i>
+                                                <h5>Recetas</h5>
+                                                <p class="text-muted">Crear y gestionar recetas</p>
+                                                <button class="btn btn-hospital" onclick="showDoctorSection('doctor-prescriptions')">Gestionar Recetas</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                        <div class="card text-center">
+                                            <div class="card-body">
+                                                <i class="fas fa-calendar-check feature-icon"></i>
+                                                <h5>Citas</h5>
+                                                <p class="text-muted">Programar y ver citas</p>
+                                                <button class="btn btn-hospital" onclick="showDoctorSection('doctor-appointments')">Ver Agenda</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección de Pacientes -->
+            <div id="doctor-patients" class="doctor-content-section hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-users me-2"></i>Gestión de Pacientes
+                    </div>
+                    <div class="card-body">
+                        <h4>Mis Pacientes</h4>
+                        <div class="row" id="doctor-patients-list">
+                            <!-- Los pacientes se cargarán aquí mediante JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección de Citas -->
+            <div id="doctor-appointments" class="doctor-content-section hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-calendar-check me-2"></i>Gestión de Citas
+                    </div>
+                    <div class="card-body">
+                        <h4>Citas Programadas</h4>
+                        <div class="list-group" id="doctor-appointments-list">
+                            <!-- Las citas se cargarán aquí mediante JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección de Recetas -->
+            <div id="doctor-prescriptions" class="doctor-content-section hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-prescription me-2"></i>Gestión de Recetas
+                    </div>
+                    <div class="card-body">
+                        <h4>Recetas Médicas</h4>
+                        <div class="list-group" id="doctor-prescriptions-list">
+                            <!-- Las recetas se cargarán aquí mediante JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
     
+    <!-- Footer -->
+    <footer class="text-center mt-5">
+        <div class="container">
+            <p class="mb-0">Sistema de Gestión de Medicamentos - Hospital La Paz &copy; 2023</p>
+            <p class="mb-0">Para emergencias, llame al: <strong>123-456-7890</strong></p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Archivos JavaScript separados -->
+    
+    <script src="DoctorInterface.js"></script>
 </body>
 </html>
